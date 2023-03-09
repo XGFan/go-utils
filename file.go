@@ -30,7 +30,7 @@ func TryToRead(files []string) ([]byte, error) {
 	return nil, fs.ErrNotExist
 }
 
-func LocateFile(name string) ([]byte, error) {
+func LocateAndRead(name string) ([]byte, error) {
 	targets := make([]string, 0)
 
 	wd, err := os.Getwd()
