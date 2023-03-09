@@ -1,4 +1,4 @@
-package go_utils
+package utils
 
 import (
 	"io/fs"
@@ -32,6 +32,7 @@ func TryToRead(files []string) ([]byte, error) {
 
 func LocateAndRead(name string) ([]byte, error) {
 	targets := make([]string, 0)
+	targets = append(targets, name)
 
 	wd, err := os.Getwd()
 	if err == nil && wd != "" {
