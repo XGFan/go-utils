@@ -16,15 +16,17 @@ func RandString(n int) string {
 	return string(b)
 }
 
-func RaceResult[T any, R any](works []T, workFunc func(T) R, timeout time.Duration) (R, error) {
+func RaceResultWithError[T any, R any](works []T, workFunc func(T) (R, error), timeout time.Duration) (R, error) {
 	result := make(chan R)
 	timer := time.NewTimer(timeout)
 	for _, w := range works {
 		go func(arg T) {
-			r := workFunc(arg)
-			select {
-			case result <- r:
-			case <-timer.C:
+			r, e := workFunc(arg)
+			if e == nil {
+				select {
+				case result <- r:
+				case <-timer.C:
+				}
 			}
 		}(w)
 	}
@@ -37,4 +39,10 @@ func RaceResult[T any, R any](works []T, workFunc func(T) R, timeout time.Durati
 			return *new(R), errors.New("all attempt fail")
 		}
 	}
+}
+
+func RaceResult[T any, R any](works []T, workFunc func(T) R, timeout time.Duration) (R, error) {
+	return RaceResultWithError[T, R](works, func(t T) (R, error) {
+		return workFunc(t), nil
+	}, timeout)
 }
