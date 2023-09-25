@@ -18,26 +18,24 @@ func RandString(n int) string {
 
 func RaceResultWithError[T any, R any](works []T, workFunc func(T) (R, error), timeout time.Duration) (R, error) {
 	result := make(chan R)
-	timer := time.NewTimer(timeout)
+	done := make(chan struct{})
+	defer close(done)
 	for _, w := range works {
 		go func(arg T) {
 			r, e := workFunc(arg)
 			if e == nil {
 				select {
 				case result <- r:
-				case <-timer.C:
+				case <-done:
 				}
 			}
 		}(w)
 	}
-
-	for {
-		select {
-		case ret := <-result:
-			return ret, nil
-		case <-timer.C:
-			return *new(R), errors.New("all attempt fail")
-		}
+	select {
+	case ret := <-result:
+		return ret, nil
+	case <-time.After(timeout):
+		return *new(R), errors.New("all attempt fail")
 	}
 }
 
