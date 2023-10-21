@@ -13,7 +13,7 @@ func RetryEnhance[T any](max int, f func() (T, error), handler func(error)) (T, 
 			return result, err
 		} else {
 			handler(err)
-			return Retry(max-1, f)
+			return RetryEnhance(max-1, f, handler)
 		}
 	}
 	return result, err
