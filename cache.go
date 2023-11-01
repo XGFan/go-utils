@@ -72,7 +72,7 @@ func (cache *TTLCache[K, V]) Filter(id K) bool {
 
 }
 
-func NewTTlCache[K comparable, V comparable](ttl time.Duration) *TTLCache[K, V] {
+func NewTTlCache[K any, V any](ttl time.Duration) *TTLCache[K, V] {
 	dnsCache := &TTLCache[K, V]{
 		ttl:       ttl,
 		storage:   sync.Map{},
