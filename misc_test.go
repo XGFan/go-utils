@@ -24,4 +24,22 @@ func TestRaceResult(t *testing.T) {
 			t.Errorf("should get error")
 		}
 	})
+	t.Run("all ended", func(t *testing.T) {
+		ints := make(chan int, 10)
+		_, err := RaceResult[int, int]([]int{3, 4, 5, 1, 2}, func(i int) int {
+			time.Sleep(time.Duration(i) * time.Second)
+			defer func() {
+				ints <- i
+			}()
+			return i
+		}, 500*time.Millisecond)
+		<-ints
+		<-ints
+		<-ints
+		<-ints
+		<-ints
+		if err == nil {
+			t.Errorf("should get error")
+		}
+	})
 }

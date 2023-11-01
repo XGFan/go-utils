@@ -5,14 +5,14 @@ import (
 	"time"
 )
 
-type TTLCache[K comparable, V comparable] struct {
+type TTLCache[K any, V any] struct {
 	ttl       time.Duration
 	storage   sync.Map
 	lock      sync.Mutex
 	nextClean time.Time
 }
 
-type CacheItem[V comparable] struct {
+type CacheItem[V any] struct {
 	validBefore time.Time
 	value       V
 }
