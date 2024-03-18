@@ -16,7 +16,7 @@ func SliceToChan[T any](list []T) chan T {
 type Set[T comparable] interface {
 	Contains(item T) bool
 	Add(item T)
-	Remote(item T)
+	Remove(item T)
 	Size() int
 	Values() []T
 }
@@ -50,7 +50,7 @@ func (d DefaultSet[T]) Add(item T) {
 	d.m[item] = EMPTY_STRUCT
 }
 
-func (d DefaultSet[T]) Remote(item T) {
+func (d DefaultSet[T]) Remove(item T) {
 	delete(d.m, item)
 }
 
